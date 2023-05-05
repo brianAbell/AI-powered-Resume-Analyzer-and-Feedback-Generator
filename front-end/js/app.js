@@ -1,8 +1,15 @@
-//button functionality
-const uploadButton = document.getElementById('uploadButton');
 
-//get input file
-const fileInput = document.getElementById('fileInput');
+//DOMContentLoaded event to ensure that the HTML document has been fully loaded
+//and parsed before attempting to access any elements
+//Task: this code first gets the reference to the button element then it attaches
+//an event listender to it which then waits for the "click" event. Finally,
+//uploadResume function is executed.
+document.addEventListener("DOMContentLoaded", function () {
+    //button functionality
+    const uploadButton = document.getElementById("uploadButton");
+    uploadButton.addEventListener("click", uploadResume);
+});
+
 
 //event listener for button / button functionality
 uploadButton.addEventListener('click', () => {
