@@ -5,6 +5,10 @@
 # and starts the development server when the script is run.
 from flask import Flask, request, jsonify
 import openai
+import os
+
+openai.api_key = os.environ.get("OPENAI_API_KEY")
+
 
 app = Flask(__name__)
 
