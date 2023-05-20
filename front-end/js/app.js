@@ -1,32 +1,55 @@
-//DOMContentLoaded event to ensure that the HTML document has been fully loaded
-//and parsed before attempting to access any elements
-//Task: this code first gets the reference to the button element then it attaches
-//an event listender to it which then waits for the "click" event. Finally,
-//uploadResume function is executed.
-document.addEventListener("DOMContentLoaded", function () {
-    //button functionality
-    const uploadButton = document.getElementById("uploadButton");
-    uploadButton.addEventListener("click", uploadResume);
+// Wait until the HTML document is fully loaded before running the JavaScript code
+window.addEventListener('DOMContentLoaded', (event) => {
+    // Get the reference to the upload button element
+    const uploadButton = document.getElementById('uploadButton');
+    // Get the reference to the output box where the GPT-3 response will be displayed
+    const outputBox = document.getElementById('outputBox');
+
+    // Attach an event listener to the upload button to handle file uploads
+    uploadButton.addEventListener('change', function() {
+        // When a file is uploaded, get a reference to the file
+        const file = this.files[0];
+        // Create a new FileReader to read the content of the uploaded file
+        const reader = new FileReader();
+
+        // Attach an event listener to the FileReader that triggers when the file has been read
+        reader.onload = function(evt) {
+            // Send a POST request to the '/process-file' route with the content of the uploaded file
+            fetch('/process-file', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ fileContent: evt.target.result }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // After the '/process-file' route returns a response, send a POST request to the '/get-gpt-response' route
+                // with the extracted text from the uploaded file
+                fetch('/get-gpt-response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ input_text: data.extractedText }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the GPT-4 response in the output box
+                    outputBox.textContent = data.reply;
+                })
+                .catch((error) => {
+                    // Log any errors that occur during the '/get-gpt-response' request
+                    console.error('Error:', error);
+                });
+            })
+            .catch((error) => {
+                // Log any errors that occur during the '/process-file' request
+                console.error('Error:', error);
+            });
+        };
+
+        // Start reading the uploaded file. When done, the 'onload' event listener will be triggered
+        reader.readAsText(file);
+    });
 });
-
-function uploadResume() {
-    console.log("Botton clicked!");
-
-    const inputText = "Your prompt text goes here";
-
-    // Call the backend route and process the response
-    fetch("/gpt4", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ input: inputText }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log("GPT-4 response:", data.output);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
-}
