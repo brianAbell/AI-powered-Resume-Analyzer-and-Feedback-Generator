@@ -19,22 +19,26 @@ def hello_world():
 #new route for GPT API requests
 #NOTE: This code defines a new route named /gpt4 that accepts POST requests, 
 # reads the input field from the incoming JSON data, 
-# calls the GPT-3 API using the OpenAI library, 
+# calls the GPT-4 API using the OpenAI library, 
 # and returns the result as a JSON object.
 @app.route('/gpt4', methods=['POST'])
-def gpt4():
+def generate_text():
     input_text = request.json.get('input', '')
 
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=input_text,
-        max_tokens=150,
-        n=1,
-        stop=None,
-        temperature=0.5,
+    # Generate a response using OpenAI's GPT-4
+    response = openai.ChatCompletion.create(
+      model="gpt4",  # Replace with the actual model name you're using
+      messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": input_text},
+        ]
     )
 
-    return jsonify({'output': response.choices[0].text})
+    # Extract the assistant's reply from the response
+    reply = response['choices'][0]['message']['content']
+
+    # Here we are returning the reply as a JSON response
+    return jsonify({'reply': reply})
 
 if __name__ == '__main__':
     app.run(debug=True)
