@@ -2,11 +2,18 @@
 window.addEventListener('DOMContentLoaded', (event) => {
     // Get the reference to the upload button element
     const uploadButton = document.getElementById('uploadButton');
-    // Get the reference to the output box where the GPT-3 response will be displayed
+    const fileInput = document.getElementById('fileInput');
+    // Get the reference to the output box where the GPT-4 response will be displayed
     const outputBox = document.getElementById('outputBox');
 
+
+    uploadButton.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+
     // Attach an event listener to the upload button to handle file uploads
-    uploadButton.addEventListener('change', function() {
+    fileInput.addEventListener('change', function() {
         // When a file is uploaded, get a reference to the file
         const file = this.files[0];
         // Create a new FileReader to read the content of the uploaded file
