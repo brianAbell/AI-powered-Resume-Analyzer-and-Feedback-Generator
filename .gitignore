@@ -1,4 +1,9 @@
 venv/
-Testing/
+tests/
 .venv
 .env
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
