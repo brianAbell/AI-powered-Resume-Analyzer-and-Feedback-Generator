@@ -1,5 +1,4 @@
 venv/
-tests/
 .venv
 .env
 
@@ -7,3 +6,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+frontend/node_modules/
+frontend/*.json
+backend/testapp.py
+resumes/
