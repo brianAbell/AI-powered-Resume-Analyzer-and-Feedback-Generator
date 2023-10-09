@@ -31,31 +31,40 @@ def hello_world():
 # NOTE: then decodes file, extract text using PyPDF2, returns text
 @app.route('/process-file', methods=['POST'])
 def process_file():
-    # Get the base64-encoded file content from the request's JSON payload
-    file_data = request.json.get('fileContent', '')
+    try:
+        # Get the base64-encoded file content from the request's JSON payload
+        file_data = request.json.get('fileContent', '')
 
-    # Decode the base64 string to get the binary data
-    file_bytes = BytesIO(base64.b64decode(file_data))
-    
-    # If we received some data
-    if file_bytes:
-        # Create a PDF file reader object
-        pdf_file = PyPDF2.PdfReader(file_bytes)
-
-        # Initialize an empty string to store the extracted text
-        text = ''
-
-        # Loop over all the pages in the PDF file
-        for page in range(len(pdf_file.pages)):
-            # Extract the text from the current page and append it to our text string
-            text += pdf_file.pages[page].extract_text()
+        # Decode the base64 string to get the binary data
+        file_bytes = BytesIO(base64.b64decode(file_data))
         
-        # Return the extracted text in a JSON response
-        return jsonify({'extractedText': text})
-    
-    # If we didn't receive any data, return an error message
-    else:
-        return jsonify({'error': 'Invalid file content.'}), 400
+        # If we received some data
+        if file_bytes:
+            # Create a PDF file reader object
+            pdf_file = PyPDF2.PdfReader(file_bytes)
+
+            # Initialize an empty string to store the extracted text
+            text = ''
+
+            # Loop over all the pages in the PDF file
+            for page in range(len(pdf_file.pages)):
+                # Extract the text from the current page and append it to our text string
+                text += pdf_file.pages[page].extract_text()
+            
+            # Return the extracted text in a JSON response
+            return jsonify({'extractedText': text})
+        
+        # If we didn't receive any data, return an error message
+        else:
+            return jsonify({'error': 'Invalid file content.'}), 400
+    except Exception as e:
+        # Check if the error is a PdfReadError
+        if 'EOF marker not found' in str(e):
+            return jsonify({'error': 'Invalid or corrupt PDF file.'}), 400
+        # You may add more conditions here to handle different errors differently
+        # Else, return a general server error
+        else:
+            return jsonify({'error': 'An error occurred processing the file.'}), 500
 # ____________________________________________________________
 
 # GPT4 INTERACTION ____________________________________________
