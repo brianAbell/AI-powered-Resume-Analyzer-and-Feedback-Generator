@@ -77,6 +77,10 @@ def process_file():
 def generate_text():
     input_text = request.json.get('input', '')
 
+    # error handling
+    if not input_text:
+        return jsonify({'error': 'Input text is required.'}), 400
+
     # Generate a response using OpenAI's GPT-4
     response = openai.ChatCompletion.create(
       model="gpt4",  # Replace with the actual model name you're using
@@ -95,7 +99,11 @@ def generate_text():
 # send the extracted text as a prompt to the API
 @app.route('/get-gpt-response', methods=['POST'])
 def get_gpt_response():
-    input_text = request.json['input_text']
+    try:
+        input_text = request.json['input_text']
+    except KeyError:
+        return jsonify({'error': 'Input text is required.'}), 400
+    
     response = openai.ChatCompletion.create(
         model="gpt4",
         messages=[
