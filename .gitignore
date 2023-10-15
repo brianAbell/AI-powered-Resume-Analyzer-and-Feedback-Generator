@@ -8,5 +8,4 @@ __pycache__/
 *.pyd
 frontend/node_modules/
 frontend/*.json
-backend/testapp.py
 resumes/
