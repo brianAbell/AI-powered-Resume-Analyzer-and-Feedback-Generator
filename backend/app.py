@@ -7,7 +7,6 @@ from flask import Flask, request, jsonify
 import openai
 import os
 import PyPDF2
-import dotenv
 import base64
 
 from io import BytesIO
