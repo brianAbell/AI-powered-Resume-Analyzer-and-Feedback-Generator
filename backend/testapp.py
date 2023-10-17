@@ -1,7 +1,6 @@
 import unittest
 import json
 import sys
-import PyPDF2
 import base64
 from app import app  # Importing the Flask app
 from app import process_file
