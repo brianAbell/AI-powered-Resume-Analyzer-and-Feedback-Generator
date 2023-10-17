@@ -68,49 +68,23 @@ def process_file():
 # ____________________________________________________________
 
 # GPT4 INTERACTION ____________________________________________
-#new route for GPT API requests
-#NOTE: This code defines a new route named /gpt4 that accepts POST requests, 
-# reads the input field from the incoming JSON data, 
-# calls the GPT-4 API using the OpenAI library, 
-# and returns the result as a JSON object.
-@app.route('/gpt4', methods=['POST'])
-def generate_text():
+@app.route('/resume-feedback', methods=['POST'])
+def get_resume_feedback():
+    # Extract the resume text
     input_text = request.json.get('input', '')
-
-    # error handling
     if not input_text:
         return jsonify({'error': 'Input text is required.'}), 400
 
-    # Generate a response using OpenAI's GPT-4
-    response = openai.ChatCompletion.create(
-      model="gpt4",  # Replace with the actual model name you're using
-      messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": input_text},
-        ]
-    )
-
-    # Extract the assistant's reply from the response
-    reply = response['choices'][0]['message']['content']
-
-    # Here we are returning the reply as a JSON response
-    return jsonify({'reply': reply})
-
-# send the extracted text as a prompt to the API
-@app.route('/get-gpt-response', methods=['POST'])
-def get_gpt_response():
-    try:
-        input_text = request.json['input_text']
-    except KeyError:
-        return jsonify({'error': 'Input text is required.'}), 400
-    
+    # Send parsed resume AND instructions to GPT-4 for analysis
     response = openai.ChatCompletion.create(
         model="gpt4",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "Provide constructive feedback and suggestions for the following resume:"},
             {"role": "user", "content": input_text},
         ]
     )
+
+    # Extract and return the model's reply
     reply = response['choices'][0]['message']['content']
     return jsonify({'reply': reply})
 # _____________________________________________________________
