@@ -1,18 +1,15 @@
-#contains our Flask application code
-#NOTE: This code imports the Flask library, 
-# creates a new Flask application, 
-# defines a single route that returns "Hello, World!" when accessed, 
-# and starts the development server when the script is run.
-from flask import Flask, request, jsonify
-import openai
-import os
-import PyPDF2
+# Following PEP 8 guidelines
 import base64
+import os
 
 from io import BytesIO
-
+import PyPDF2
+import openai
 from dotenv import load_dotenv
+from flask import Flask, jsonify, request
+
 load_dotenv()
+
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
