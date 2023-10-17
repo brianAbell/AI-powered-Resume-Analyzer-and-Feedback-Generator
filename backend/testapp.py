@@ -71,44 +71,26 @@ class AppTestCase(unittest.TestCase):
     # _______________________________________________________________
 
     # GPT4 INTERACTION TESTS ____________________________________________
-    #NOTE: using unittest's 'mock' to avoid actual API calls
-    # test 1: ______________________________________________________
+    # test 1: _______________________________________________________
     @patch('app.openai.ChatCompletion.create')
-    def test_generate_text_valid(self, mock_create):
-        mock_create.return_value = {
-            'choices': [{
-                'message': {'content': 'Sample reply for gpt4'}
-            }]
-        }
-
-        response = self.app.post('/gpt4',
-                                 data=json.dumps({'input': 'Hello, GPT!'}),
-                                 content_type='application/json')
-        
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get_json(), {'reply': 'Sample reply for gpt4'})
-        
-
-    # test 2: ______________________________________________________
-    @patch('app.openai.ChatCompletion.create')
-    def test_get_gpt_response_valid(self, mock_create):
+    def test_resume_feedback_valid(self, mock_create):
         # Mocking the OpenAI API response
         mock_create.return_value = {
             'choices': [{
-                'message': {'content': 'Sample reply for get-gpt-response'}
+                'message': {'content': 'Sample reply for resume-feedback'}
             }]
         }
-        
-        response = self.app.post('/get-gpt-response',
-                                 data=json.dumps({'input_text': 'Hello again, GPT!'}),
-                                 content_type='application/json')
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get_json(), {'reply': 'Sample reply for get-gpt-response'})
+        response = self.app.post('/resume-feedback',
+                                data=json.dumps({'input': 'Sample Resume Content'}),
+                                content_type='application/json')
         
-    # test 3: ______________________________________________________
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {'reply': 'Sample reply for resume-feedback'})
+
+    # test 2: __________________________________________________________
     @patch('app.openai.ChatCompletion.create')
-    def test_generate_text_invalid(self, mock_openai_create):
+    def test_resume_feedback_invalid(self, mock_openai_create):
         # Mocking the OpenAI API call to return a predefined response
         mock_openai_create.return_value = {
             'choices': [
@@ -117,7 +99,7 @@ class AppTestCase(unittest.TestCase):
         }
         
         # Sending POST request without 'input' key in JSON
-        response = self.app.post('/gpt4', json={}, content_type='application/json')
+        response = self.app.post('/resume-feedback', json={}, content_type='application/json')
         
         # Check if the API was not called due to invalid input
         mock_openai_create.assert_not_called()
@@ -125,25 +107,6 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {'error': 'Input text is required.'})
 
-    # test 4: ______________________________________________________
-    @patch('app.openai.ChatCompletion.create')
-    def test_get_gpt_response_invalid(self, mock_openai_create):
-        # Mocking the OpenAI API call to return a predefined response
-        mock_openai_create.return_value = {
-            'choices': [
-                {'message': {'content': 'Some reply from the mocked API.'}}
-            ]
-        }
-
-        # Sending POST request without 'input_text' key in JSON
-        response = self.app.post('/get-gpt-response', json={}, content_type='application/json')
-        
-        # Check if the API was not called due to invalid input
-        mock_openai_create.assert_not_called()
-        
-        # Check for a 400 error and an appropriate error message
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.get_json(), {'error': 'Input text is required.'})
     # ___________________________________________________________________
 
 
