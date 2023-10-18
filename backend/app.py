@@ -5,10 +5,13 @@ import os
 from io import BytesIO
 import PyPDF2
 import openai
+import logging
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -27,6 +30,7 @@ def hello_world():
 # NOTE: then decodes file, extract text using PyPDF2, returns text
 @app.route('/process-file', methods=['POST'])
 def process_file():
+    logging.info("Received a request to process a PDF.")
     try:
         # Get the base64-encoded file content from the request's JSON payload
         file_data = request.json.get('fileContent', '')
@@ -47,6 +51,8 @@ def process_file():
                 # Extract the text from the current page and append it to our text string
                 text += pdf_file.pages[page].extract_text()
             
+            logging.info(f"Successfully processed a PDF with {len(pdf_file.pages)} pages.")
+            
             # Return the extracted text in a JSON response
             return jsonify({'extractedText': text})
         
@@ -54,6 +60,8 @@ def process_file():
         else:
             return jsonify({'error': 'Invalid file content.'}), 400
     except Exception as e:
+        logging.error(f"Error processing file: {e}")
+
         # Check if the error is a PdfReadError
         if 'EOF marker not found' in str(e):
             return jsonify({'error': 'Invalid or corrupt PDF file.'}), 400
@@ -82,6 +90,7 @@ def get_resume_feedback():
 
     # Extract and return the model's reply
     reply = response['choices'][0]['message']['content']
+    logging.info("Successfully obtained feedback from GPT-4 for a resume.")
     return jsonify({'reply': reply})
 # _____________________________________________________________
 
