@@ -48,6 +48,11 @@ Brian Bell
 
 ## Version History
 
+* 0.7
+    * Various bug fixes and optimizations
+    * Updated used GPT version to 'gpt-3.5-turbo'
+    * Improve overall code & comment readability
+    * See [commit change]() or See [release history]()
 * 0.2
     * Various bug fixes and optimizations
     * See [commit change]() or See [release history]()
