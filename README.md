@@ -1,7 +1,7 @@
 # AI-powered-Resume-Analyzer-and-Feedback-Generator
 
 ____________________________________________________________________________________________________________________________________________
-  ### ---UPDATE: Version 1.0 has a planned release on November 1st, 2023. I am wrapping up my testing to ensure a robust MVP. Once v1.0 is released, I will begin improving the overall user experience by doing the following... 
+  ### ---UPDATE: Version 1.0 has a planned release on November 1st, 2023. I am wrapping up my testing to ensure a robust MVP (v1.0). Once v1.0 is released, I will begin improving the overall user experience by doing the following... 
  1. Creating a more engaging front-end web interface
  2. Continue to thoroughly test and debug
  3. Expand functionality through various channels such as... Resume generation based on job description, improved feedback, structured feedback parameters, resume rating scale, etc
@@ -26,22 +26,22 @@ In essence, this project serves as a prime example of how modern web development
 
 ### Dependencies
 
-* Will be provided upon completion of MVP
+* Will be provided upon completion of MVP (v1.0)
 
 ### Installing
 
-* Will be provided upon completion of MVP
+* Will be provided upon completion of MVP (v1.0)
 
 ### Executing program
 
-* Will be provided upon completion of MVP
+* Will be provided upon completion of MVP (v1.0)
 ```
 command placeholder
 ```
 
 ## Help
 
-* Will be provided upon completion of MVP
+* Will be provided upon completion of MVP (v1.0)
 ```
 command placeholder
 ```
