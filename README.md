@@ -2,6 +2,12 @@
 
  an AI-driven application utilizing GPT-4 to analyze and enhance user resumes with actionable feedback
 
+ !!!UPDATE: Version 1.0 has a planned release on November 1st, 2023. I am wrapping up my testing to ensure a robust MVP. Once v1.0 is released, I will begin improving the overall user experience by doing the following... 
+ 
+ 1. Creating a more engaging front-end web interface
+ 2. Continue to thoroughly test and debug
+ 3. Expand functionality through various channels such as... Resume generation based on job description, improved feedback, structured feedback parameters, resume rating scale, etc
+
 ## Description
 
 The project is designed as an innovative solution that aids job seekers in refining and enhancing their resumes by leveraging state-of-the-art machine learning capabilities. Through this system, users can upload their resumes and receive constructive feedback that can significantly improve their chances of standing out to potential employers.
