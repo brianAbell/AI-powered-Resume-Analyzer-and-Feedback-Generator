@@ -91,7 +91,7 @@ def get_resume_feedback():
 
     # Send parsed resume AND instructions to GPT-4 for analysis
     response = openai.ChatCompletion.create(
-        model="gpt4",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "Provide constructive feedback and suggestions for the following resume:"},
             {"role": "user", "content": input_text},
