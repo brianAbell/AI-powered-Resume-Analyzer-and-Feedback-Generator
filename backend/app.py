@@ -1,6 +1,7 @@
 # Following PEP 8 guidelines
 import base64
 import os
+from flask_cors import CORS
 
 from io import BytesIO
 import PyPDF2
@@ -18,6 +19,7 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 app = Flask(__name__)
+CORS(app) # used to resolve front/back-end communication issues
 
 # INTRO TESTING ______________________________________________
 @app.route('/')
@@ -35,8 +37,16 @@ def process_file():
         # Get the base64-encoded file content from the request's JSON payload
         file_data = request.json.get('fileContent', '')
 
+        # Check if the data starts with the known prefix and if so, strip it
+        if file_data.startswith("data:application/pdf;base64,"):
+            file_data = file_data.split(",")[1]
+
+        logging.info(f"Received file content: {file_data[:100]}...")  # Print the first 100 characters
+
         # Decode the base64 string to get the binary data
         file_bytes = BytesIO(base64.b64decode(file_data))
+
+        logging.info(f"Decoded file bytes: {file_bytes.getvalue()[:100]}...")  # Print the first 100 bytes
         
         # If we received some data
         if file_bytes:
@@ -52,7 +62,7 @@ def process_file():
                 text += pdf_file.pages[page].extract_text()
             
             logging.info(f"Successfully processed a PDF with {len(pdf_file.pages)} pages.")
-            
+            logging.info(f"Extracted text: {text[:100]}...")  # Print the first 100 characters
             # Return the extracted text in a JSON response
             return jsonify({'extractedText': text})
         
@@ -75,7 +85,7 @@ def process_file():
 @app.route('/resume-feedback', methods=['POST'])
 def get_resume_feedback():
     # Extract the resume text
-    input_text = request.json.get('input', '')
+    input_text = request.json.get('input_text', '')
     if not input_text:
         return jsonify({'error': 'Input text is required.'}), 400
 
