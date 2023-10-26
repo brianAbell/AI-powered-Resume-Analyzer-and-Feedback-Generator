@@ -67,6 +67,29 @@ class AppTestCase(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {'error': 'Invalid or corrupt PDF file.'})
+
+
+    #test 3: ______________________________________________________
+    def test_file_processing_no_text(self):
+        # Open pdf, read as bytes
+        with open("resumes/no_text_resume.pdf", "rb") as pdf_file:
+            file_bytes = pdf_file.read()
+
+            encoded_file = base64.b64encode(file_bytes).decode('utf-8')
+
+            # Construct a test request data
+            test_request_data = json.dumps({'fileContent': encoded_file})
+
+            # Construct a test request context
+            with app.test_request_context(data=test_request_data, content_type='application/json', method='POST'):
+                # Get the response from the function
+                response = process_file()
+            
+            # Expect empty or very minimal text
+            response_data = json.loads(response.data.decode('utf-8'))
+            self.assertTrue(len(response_data['extractedText']) < 1)
+            self.assertTrue(len(response_data['extractedText']) < 10)
+
     # _______________________________________________________________
 
     # GPT4 INTERACTION TESTS ____________________________________________
@@ -81,7 +104,7 @@ class AppTestCase(unittest.TestCase):
         }
 
         response = self.app.post('/resume-feedback',
-                                data=json.dumps({'input': 'Sample Resume Content'}),
+                                data=json.dumps({'input_text': 'Sample Resume Content'}),
                                 content_type='application/json')
         
         self.assertEqual(response.status_code, 200)
