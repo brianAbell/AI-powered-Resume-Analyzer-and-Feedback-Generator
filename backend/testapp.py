@@ -58,15 +58,17 @@ class AppTestCase(unittest.TestCase):
             #... any other assertions based on your function's expected behavior
     
     #test 2: ______________________________________________________
-    def test_file_processing_invalid(self):
-        invalid_input = "not_a_base64_encoded_pdf"
+    def test_file_size_limit_exceeded(self):
+        with open("resumes/too_large_file.pdf", "rb") as pdf_file:
+            file_bytes = pdf_file.read()
+            encoded_file = base64.b64encode(file_bytes).decode('utf-8')
 
-        response = self.app.post('/process-file',
-                                 json={'fileContent': invalid_input},
-                                 content_type='application/json')
-
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.get_json(), {'error': 'Invalid or corrupt PDF file.'})
+            response = self.app.post('/process-file',
+                                    json={'fileContent': encoded_file},
+                                    content_type='application/json')
+            
+            self.assertEqual(response.status_code, 413)
+            self.assertEqual(response.get_json(), {'error': 'File size exceeds the limit.'})
 
 
     #test 3: ______________________________________________________
@@ -89,7 +91,23 @@ class AppTestCase(unittest.TestCase):
             response_data = json.loads(response.data.decode('utf-8'))
             self.assertTrue(len(response_data['extractedText']) < 1)
             self.assertTrue(len(response_data['extractedText']) < 10)
+    
+    #test 4: _________________________________________________________
+    #NOTE: test_client() may be returning 200 and not 413. POSTMAN testing required
+    def test_file_processing_very_large(self):
+        # Open the too large PDF and read as bytes
+        with open("resumes/too_large_file.pdf", "rb") as pdf_file:
+            file_bytes = pdf_file.read()
 
+            encoded_file = base64.b64encode(file_bytes).decode('utf-8')
+
+            # Send this large data to your endpoint
+            response = self.app.post('/process-file',
+                                    json={'fileContent': encoded_file},
+                                    content_type='application/json')
+                                
+            # Expect a 413 Payload Too Large status code
+            self.assertEqual(response.status_code, 413) 
     # _______________________________________________________________
 
     # GPT4 INTERACTION TESTS ____________________________________________
