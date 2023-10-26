@@ -18,7 +18,7 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 app = Flask(__name__)
 CORS(app)  # Used to resolve front/back-end communication issues
-app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024  # This sets a 5 MB max limit
+app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024  # This sets a 3 MB max limit
 
 # INTRO TESTING ______________________________________________
 @app.route('/')
@@ -52,6 +52,12 @@ def process_file():
 
         # Decode the base64 string to get the binary data
         file_bytes = BytesIO(base64.b64decode(file_data))
+
+        # NOTE: Added to catch edge case - POSTMAN + UNIT couldnt catch
+        file_bytes_decoded = base64.b64decode(file_data)
+        if len(file_bytes_decoded) > app.config['MAX_CONTENT_LENGTH']:
+            return jsonify({'error': 'File size exceeds the limit.'}), 413
+        file_bytes = BytesIO(file_bytes_decoded)
 
         logging.info(f"Decoded file bytes: {file_bytes.getvalue()[:100]}...")  # Print the first 100 bytes
         
