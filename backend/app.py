@@ -30,6 +30,30 @@ def hello_world():
     return 'Hello, World!'
 
 
+# SECURITY ENHANCEMENTS_______________________________________
+def is_valid_pdf(file_bytes):
+    """
+    Checks if the given bytes represent a valid PDF file.
+    """
+    
+    # Check for PDF file signature - Basic Check
+    if file_bytes[:4] != b"%PDF":
+        return False
+    
+    # Check for EOF at end of PDF
+    if not file_bytes[-6:].startswith(b"%%EOF"):
+        return False
+
+    # Check for corrupt PDF
+    try: # will fail if corrupt pdf
+        pdf = PyPDF2.PdfReader(BytesIO(file_bytes)) 
+        _ = pdf.numPages
+    except Exception:
+        return False
+
+    return True
+#_____________________________________________________________
+
 # FILE PROCESSING ____________________________________________
 @app.route('/process-file', methods=['POST'])
 def process_file():
@@ -44,6 +68,7 @@ def process_file():
         # Get the base64-encoded file content from the request's JSON payload
         file_data = request.json.get('fileContent', '')
 
+        #NOTE: fix to MIME-type causing length issue
         # Check and strip base64 prefix
         if file_data.startswith("data:application/pdf;base64,"):
             file_data = file_data.split(",")[1]
@@ -52,6 +77,10 @@ def process_file():
 
         # Decode the base64 string to get the binary data
         file_bytes = BytesIO(base64.b64decode(file_data))
+
+        # Validate if it's a PDF file
+        if not is_valid_pdf(file_bytes.getvalue()):
+            return jsonify({'error': 'Invalid or not a PDF file.'}), 400
 
         # NOTE: Added to catch edge case - POSTMAN + UNIT couldnt catch
         file_bytes_decoded = base64.b64decode(file_data)
